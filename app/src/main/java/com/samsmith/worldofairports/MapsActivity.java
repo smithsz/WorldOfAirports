@@ -7,12 +7,14 @@ import android.util.Log;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Marker;
+
+import java.util.HashMap;
 
 public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private HashMap<String, Marker> visibleMarkers = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,7 @@ public class MapsActivity extends FragmentActivity {
     private void updateMarkers() {
         Log.d("map_activity", "updateMarkers called");
         if (this.mMap != null) {
-            // TODO: Implement updateMarkers
+            new UpdateMapMarkers(this, mMap, visibleMarkers).execute();
         }
     }
 }

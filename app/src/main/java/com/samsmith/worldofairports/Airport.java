@@ -1,30 +1,45 @@
 package com.samsmith.worldofairports;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-/**
- * Created by samsmith on 14/12/14.
- */
 public class Airport {
     private String id, name;
     private double lat, lon;
 
-    Airport(String airportId, String airportName, Double airportLat, Double airportLon) {
-        this.id = airportId;
-        this.name = airportName;
-        this.lat = airportLat;
-        this.lon = airportLon;
+    public Airport(String id, String name, Double lat, Double lon) {
+        this.id = id;
+        this.name = name;
+        this.lat = lat;
+        this.lon = lon;
     }
 
     public String getId() {
-        return this.id;
+        return id;
     }
 
-    public String getName() {
-        return this.name;
+    public MarkerOptions getMarkerOptions() {
+        return new MarkerOptions()
+                .title(name)
+                .position(getLatLong())
+                .flat(true);
     }
 
-    public LatLng getLatLong() {
-        return new LatLng(this.lat, this.lon);
+    private LatLng getLatLong() {
+        return new LatLng(lat, lon);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Airport) {
+            Airport other = (Airport) o;
+            return (id == other.id);
+        }
+        return false;
     }
 }
