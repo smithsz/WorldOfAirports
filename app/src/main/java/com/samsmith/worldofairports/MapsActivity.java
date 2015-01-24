@@ -11,6 +11,10 @@ import com.google.android.gms.maps.model.Marker;
 
 import java.util.HashMap;
 
+/**
+ * World of Airports Map Activity.
+ */
+
 public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
@@ -52,9 +56,8 @@ public class MapsActivity extends FragmentActivity {
     }
 
     private void updateMarkers() {
-        Log.d("map_activity", "updateMarkers called");
         if (this.mMap != null) {
-            new UpdateMapMarkers(this, mMap, visibleMarkers).execute();
+            new MapMarkerUpdater(this, mMap, visibleMarkers).execute();
         }
     }
 }

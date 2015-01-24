@@ -9,25 +9,32 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AirportBatch {
+/**
+ * Processes result batches and returns a list of Airport objects.
+ */
+
+public class AirportQueryWorker {
 
     private List<Airport> airports;
     private int totalRows;
     private String nextBookmark;
 
-    public AirportBatch (String queryResults) throws JSONException{
-        airports = new ArrayList<   >();
+    public AirportQueryWorker(String queryResults) throws JSONException{
+        airports = new ArrayList<>();
         processResults(queryResults);
     }
 
+    /** Returns a list of Airport objects. */
     public List<Airport> get() {
         return airports;
     }
 
+    /** Returns the total number of results for the entire query. */
     public int getTotalRows() {
         return totalRows;
     }
 
+    /** Returns the bookmark required to fetch the next results batch. */
     public String getNextBookmark() {
         return nextBookmark;
     }

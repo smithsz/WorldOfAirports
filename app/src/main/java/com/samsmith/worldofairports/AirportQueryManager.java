@@ -19,7 +19,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class AirportQuery {
+/**
+ * Manages the query requests and the processing of the result batches.
+ */
+
+public class AirportQueryManager {
 
     private HashMap<String, Marker> airportsCache;
     private List<Airport> airports;
@@ -27,29 +31,31 @@ public class AirportQuery {
     private static final String BASE_URL = "https://mikerhodes.cloudant.com/airportdb/_design/view1/_search/geo";
     private static final int MAX_MARKER_COUNT = 150;
 
-    public AirportQuery(HashMap<String, Marker> markerCache) {
+    public AirportQueryManager(HashMap<String, Marker> markerCache) {
         this.airportsCache = markerCache;
         airports = new ArrayList<>();
     }
 
+    /** Returns a list of Airport objects within the LatLong bounds specified. */
     public List<Airport> getAirports(LatLngBounds queryBounds) {
         String nextBookmark = null;
         int totalRows = MAX_MARKER_COUNT;
         while ((airportsCache.size() + airports.size()) < Math.min(MAX_MARKER_COUNT, totalRows)) {
             String response = submitQuery(getUrl(queryBounds, nextBookmark));
             try {
-                AirportBatch batch = new AirportBatch(response);
-                totalRows = batch.getTotalRows();
-                nextBookmark = batch.getNextBookmark();
-                addAirports(batch.get());
+                AirportQueryWorker results = new AirportQueryWorker(response);
+                totalRows = results.getTotalRows();
+                nextBookmark = results.getNextBookmark();
+                addAirports(results.get());
             } catch (Exception e) {
-                Log.e("getMarkers", "failed to parse query batch");
+                Log.e("getAirports", "failed to parse query batch");
                 break;
             }
         }
         return airports;
     }
 
+    /** Adds an Airport instance to the airport cache (if it doesn't already exist). */
     private void addAirports(List<Airport> newAirports) {
         for (int i=0; i<newAirports.size(); i++) {
             Airport airport = newAirports.get(i);
@@ -59,6 +65,7 @@ public class AirportQuery {
         }
     }
 
+    /** Creates the url string for the Cloudant query request. */
     public static String getUrl(LatLngBounds bounds, String nextBookmark) {
         // NE LatLong
         double latNE = bounds.northeast.latitude;

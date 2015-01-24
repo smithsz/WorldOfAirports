@@ -14,14 +14,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class UpdateMapMarkers extends AsyncTask<String, Void, List<Airport>> {
+/**
+ * Updates on-screen map markers whilst maintaining a cache of fetched markers.
+ */
+
+public class MapMarkerUpdater extends AsyncTask<String, Void, List<Airport>> {
 
     private GoogleMap mapIn;
     private HashMap<String, Marker> markersCache;
     private ProgressDialog Dialog;
     private LatLngBounds queryBounds;
 
-    public UpdateMapMarkers(Context context, GoogleMap map, HashMap<String, Marker> currentMarkers) {
+    public MapMarkerUpdater(Context context, GoogleMap map, HashMap<String, Marker> currentMarkers) {
         mapIn = map;
         markersCache = currentMarkers;
         Dialog = new ProgressDialog(context);
@@ -29,7 +33,7 @@ public class UpdateMapMarkers extends AsyncTask<String, Void, List<Airport>> {
 
     @Override
     protected List<Airport> doInBackground(String... arg0) {
-        AirportQuery query = new AirportQuery(markersCache);
+        AirportQueryManager query = new AirportQueryManager(markersCache);
         return query.getAirports(queryBounds);
     }
 
@@ -48,7 +52,6 @@ public class UpdateMapMarkers extends AsyncTask<String, Void, List<Airport>> {
             Airport airport = newAirports.get(i);
             markersCache.put(airport.getId(), mapIn.addMarker(airport.getMarkerOptions()));
         }
-        // hide spinner
         Dialog.dismiss();
     }
 
